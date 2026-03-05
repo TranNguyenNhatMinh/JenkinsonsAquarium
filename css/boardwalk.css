@@ -187,7 +187,7 @@
 
 /* Intro */
 .boardwalk-intro {
-    padding: 3rem 0;
+    padding: 4rem 0 3.5rem;
     background: #ffffff;
 }
 
@@ -206,7 +206,7 @@
 
 /* Discover More */
 .boardwalk-discover {
-    padding: 0 0 4rem;
+    padding: 3.5rem 0 5rem;
     background: #f8f9fa;
 }
 

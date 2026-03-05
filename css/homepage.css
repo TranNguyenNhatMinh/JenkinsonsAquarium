@@ -231,8 +231,8 @@
 .about-us-section {
     background: linear-gradient(165deg, #eef6f9 0%, #ffffff 45%, #f5f9fc 100%);
     padding: 5.5rem 0;
-    margin-top: 5rem;
-    margin-bottom: 5rem;
+    margin-top: 6rem;
+    margin-bottom: 6rem;
     position: relative;
     overflow: hidden;
 }
@@ -642,7 +642,7 @@
    ============================================ */
 .upcoming-events {
     background: #fafbfc;
-    padding: 4.5rem 0 5rem;
+    padding: 5.5rem 0 6rem;
     position: relative;
 }
 
@@ -652,6 +652,12 @@
     padding-left: 15px;
     padding-right: 15px;
     width: 100%;
+}
+
+/* Khoảng cách giữa các card nhỏ hơn */
+.upcoming-events .events-grid .row {
+    --bs-gutter-x: 0.75rem;
+    --bs-gutter-y: 0.75rem;
 }
 
 .upcoming-events-header {
@@ -695,6 +701,7 @@
 /* Featured Experiences Title - Blue Color */
 .featured-experiences .section-title {
     color: var(--aqua-color);
+    text-align: center;
 }
 
 .section-title::after {
@@ -957,16 +964,16 @@
    ============================================ */
 .featured-experiences {
     background: #fff;
-    padding: 5rem 0 6rem;
+    padding: 6rem 0 7rem;
 }
 
 .featured-experiences .container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
 .featured-experiences .section-title {
-    text-align: left;
-    color: #1a1a1a;
-    font-size: clamp(1.5rem, 3.5vw, 2rem);
-    font-weight: 700;
-    margin-bottom: 2rem;
+    text-align: center;
+    color: var(--aqua-color);
+    font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+    font-weight: 800;
+    margin-bottom: 2.25rem;
 }
 .featured-experiences .section-title::after { display: none; }
 
@@ -975,6 +982,12 @@
     display: flex;
     align-items: center;
     gap: 1rem;
+}
+
+/* Force Featured Experiences title to be centered & aqua */
+#featured-experiences .section-title {
+    text-align: center !important;
+    color: var(--aqua-color) !important;
 }
 
 .exp-nav-btn {
@@ -1037,10 +1050,6 @@
     border-radius: 12px 12px 0 0;
 }
 
-.limited-badge {
-    display: none !important;
-}
-
 .experience-card .card-body {
     padding: 1.25rem 1.5rem;
     flex-grow: 1;
@@ -1097,7 +1106,7 @@
 .attractions {
     background-color: #1a1a1a;
     padding: 5rem 0 0 0;
-    margin-top: 4rem;
+    margin-top: 5.5rem;
     margin-bottom: 0;
 }
 

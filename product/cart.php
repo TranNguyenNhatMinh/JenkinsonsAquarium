@@ -12,26 +12,39 @@ $all_cart_total = getAllCartTotal();
 $imgBase = '../';
 $currentSite = $_SESSION['current_site'] ?? 'aquarium';
 
-// Remove product via GET (avoid nested forms)
-if (isset($_GET['remove'])) {
-    $pid = intval($_GET['remove']);
-    if ($pid > 0) {
-        removeFromCart($pid);
+// Ensure CSRF token exists for cart actions
+if (empty($_SESSION['csrf_token'])) {
+    try {
+        $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+    } catch (Exception $e) {
+        $_SESSION['csrf_token'] = md5(uniqid('', true));
     }
-    header('Location: cart.php');
-    exit();
 }
-
-// Remove experience via GET
-if (isset($_GET['remove_experience'])) {
-    $key = $_GET['remove_experience'];
-    removeExperienceFromCart($key);
-    header('Location: cart.php');
-    exit();
-}
+$csrf_token = $_SESSION['csrf_token'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['update_cart'])) {
+    $tokenValid = isset($_POST['csrf_token'], $_SESSION['csrf_token']) && hash_equals($_SESSION['csrf_token'], $_POST['csrf_token']);
+
+    // Remove single product from cart
+    if ($tokenValid && isset($_POST['remove'])) {
+        $pid = intval($_POST['remove']);
+        if ($pid > 0) {
+            removeFromCart($pid);
+        }
+        header('Location: cart.php');
+        exit();
+    }
+
+    // Remove experience from cart
+    if ($tokenValid && isset($_POST['remove_experience'])) {
+        $key = $_POST['remove_experience'];
+        removeExperienceFromCart($key);
+        header('Location: cart.php');
+        exit();
+    }
+
+    // Update quantities
+    if ($tokenValid && isset($_POST['update_cart'])) {
         // Update products
         if (isset($_POST['quantity'])) {
             foreach ($_POST['quantity'] as $product_id => $quantity) {
@@ -66,6 +79,7 @@ include __DIR__ . '/../includes/header.php';
             </div>
         <?php else: ?>
             <form method="POST" action="">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($csrf_token); ?>">
                 <div class="table-responsive">
                     <table class="table table-bordered">
                         <thead>
@@ -100,7 +114,13 @@ include __DIR__ . '/../includes/header.php';
                                     </td>
                                     <td class="cart-subtotal"><?php echo formatCurrency($subtotal); ?></td>
                                     <td>
-                                        <a href="cart.php?remove=<?php echo (int)$item['product_id']; ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to remove this product?');">Remove</a>
+                                        <button type="submit"
+                                                name="remove"
+                                                value="<?php echo (int)$item['product_id']; ?>"
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Are you sure you want to remove this product?');">
+                                            Remove
+                                        </button>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
@@ -131,7 +151,13 @@ include __DIR__ . '/../includes/header.php';
                                     </td>
                                     <td class="cart-subtotal"><?php echo formatCurrency($subtotal); ?></td>
                                     <td>
-                                        <a href="cart.php?remove_experience=<?php echo urlencode($key); ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to remove this experience?');">Remove</a>
+                                        <button type="submit"
+                                                name="remove_experience"
+                                                value="<?php echo htmlspecialchars($key); ?>"
+                                                class="btn btn-sm btn-danger"
+                                                onclick="return confirm('Are you sure you want to remove this experience?');">
+                                            Remove
+                                        </button>
                                     </td>
                                 </tr>
                             <?php 

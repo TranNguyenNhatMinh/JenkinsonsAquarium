@@ -93,23 +93,51 @@ function getCategories() {
  */
 function getProductsByCategory($category_id = null, $limit = null) {
     $conn = getDBConnection();
-    
+
     $sql = "SELECT * FROM products WHERE status = 'active'";
+    $types = '';
+    $params = [];
+
     if ($category_id) {
-        $sql .= " AND category_id = " . intval($category_id);
+        $sql .= " AND category_id = ?";
+        $types .= 'i';
+        $params[] = (int)$category_id;
     }
+
     $sql .= " ORDER BY display_order ASC, created_at DESC";
-    
+
     if ($limit) {
-        $sql .= " LIMIT " . intval($limit);
+        $sql .= " LIMIT ?";
+        $types .= 'i';
+        $params[] = (int)$limit;
     }
-    
-    $result = $conn->query($sql);
+
+    if ($types === '') {
+        // No parameters to bind
+        $result = $conn->query($sql);
+    } else {
+        $stmt = $conn->prepare($sql);
+        if (!$stmt) {
+            $conn->close();
+            return [];
+        }
+        $stmt->bind_param($types, ...$params);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    }
+
     $products = [];
-    while ($row = $result->fetch_assoc()) {
-        $products[] = $row;
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
+            $products[] = $row;
+        }
+    }
+
+    if (isset($stmt) && $stmt instanceof mysqli_stmt) {
+        $stmt->close();
     }
     $conn->close();
+
     return $products;
 }
 
@@ -196,7 +224,18 @@ function getOrderItems($order_id) {
     }
     
     $image_prefix = $is_subfolder ? '../' : '';
-    
+
+    // Preload experiences data once (if available)
+    $experienceDataAvailable = false;
+    $experiences = [];
+    $experienceDataPath = __DIR__ . '/experience-data.php';
+    if (file_exists($experienceDataPath)) {
+        require_once $experienceDataPath;
+        if (isset($experiences) && is_array($experiences)) {
+            $experienceDataAvailable = true;
+        }
+    }
+
     while ($row = $result->fetch_assoc()) {
         // For products (product_id > 0), ensure image path has correct prefix
         if ($row['product_id'] > 0 && !empty($row['image'])) {
@@ -213,34 +252,29 @@ function getOrderItems($order_id) {
         }
         
         // For experiences (product_id = 0), try to get image from experience data
-        if ($row['product_id'] == 0) {
-            if (file_exists(__DIR__ . '/experience-data.php')) {
-                require_once __DIR__ . '/experience-data.php';
-                // Try to extract experience title from product_name
-                // Format: "Experience Title (Certificate: name)" or "Experience Title"
-                $product_name = $row['product_name'];
-                $exp_title = preg_replace('/\s*\(Certificate:\s*[^)]+\)\s*$/i', '', $product_name);
-                $exp_title = trim($exp_title);
-                // Find matching experience
-                if (isset($experiences) && is_array($experiences)) {
-                    foreach ($experiences as $slug => $exp) {
-                        if (isset($exp['title']) && trim($exp['title']) === $exp_title) {
-                            $image_path = trim($exp['image']);
-                            // Skip if already absolute URL or absolute path
-                            if (preg_match('/^(http|https|\/)/', $image_path)) {
-                                $row['image'] = $image_path;
-                            } else {
-                                // Normalize path: remove any existing '../' or './' prefixes
-                                $image_path = preg_replace('/^(\.\.\/|\.\/)+/', '', $image_path);
-                                // Add correct prefix based on context
-                                $row['image'] = $image_prefix . $image_path;
-                            }
-                            $row['is_experience'] = true;
-                            $row['is_event'] = (isset($exp['category']) && $exp['category'] === 'EVENT');
-                            $row['experience_slug'] = $slug;
-                            break;
-                        }
+        if ($row['product_id'] == 0 && $experienceDataAvailable) {
+            // Try to extract experience title from product_name
+            // Format: "Experience Title (Certificate: name)" or "Experience Title"
+            $product_name = $row['product_name'];
+            $exp_title = preg_replace('/\s*\(Certificate:\s*[^)]+\)\s*$/i', '', $product_name);
+            $exp_title = trim($exp_title);
+            // Find matching experience
+            foreach ($experiences as $slug => $exp) {
+                if (isset($exp['title']) && trim($exp['title']) === $exp_title) {
+                    $image_path = trim($exp['image']);
+                    // Skip if already absolute URL or absolute path
+                    if (preg_match('/^(http|https|\/)/', $image_path)) {
+                        $row['image'] = $image_path;
+                    } else {
+                        // Normalize path: remove any existing '../' or './' prefixes
+                        $image_path = preg_replace('/^(\.\.\/|\.\/)+/', '', $image_path);
+                        // Add correct prefix based on context
+                        $row['image'] = $image_prefix . $image_path;
                     }
+                    $row['is_experience'] = true;
+                    $row['is_event'] = (isset($exp['category']) && $exp['category'] === 'EVENT');
+                    $row['experience_slug'] = $slug;
+                    break;
                 }
             }
         }

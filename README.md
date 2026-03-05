@@ -1,218 +1,127 @@
-# Jenkinson's Aquarium & Boardwalk - Website
+# Jenkinson's – Website Giới Thiệu & Thương Mại
 
-## 📖 Giới thiệu
-
-Website giới thiệu và đặt vé/trải nghiệm cho **Jenkinson's** – hệ thống Aquarium (Thủy cung), Boardwalk (Đi bộ ven biển) và Sweet Shop tại Point Pleasant Beach, NJ, USA.
-
-Người dùng có thể:
-- Xem thông tin, sự kiện và trải nghiệm
-- Đăng ký tài khoản, đăng nhập
-- Mua sản phẩm (qua Sweet Shop)
-- Đặt trải nghiệm và đăng ký sự kiện (Junior Keepers, Yoga, Sensory Saturdays…)
-- Thanh toán qua giỏ hàng
-- Quản lý đơn hàng, hồ sơ cá nhân
-
-Admin có thể quản lý: sản phẩm, danh mục, đơn hàng, người dùng, đăng ký sự kiện, newsletter.
+> **Dự án web full-stack** mô phỏng trang thông tin và bán hàng cho khu phức hợp Jenkinson's (Aquarium, Boardwalk, Sweet Shop). Dự án phù hợp để nhà tuyển dụng đánh giá năng lực **PHP, MySQL, HTML/CSS/JS** và cách tổ chức code.
 
 ---
 
-## 🛠 Ngôn ngữ & Công nghệ
+## Tổng quan
+
+Website gồm **3 khu vực chính** (Aquarium, Boardwalk, Sweet Shop) với trang chủ, các trang nội dung tĩnh/động, **hệ thống đăng nhập/đăng ký**, **giỏ hàng & thanh toán**, **đăng ký sự kiện**, và **khu vực quản trị (Admin)** quản lý sản phẩm, đơn hàng, người dùng và đăng ký newsletter/sự kiện.
+
+- **Đối tượng:** Khách xem thông tin, đặt trải nghiệm, mua sản phẩm; Admin quản lý nội dung và đơn hàng.
+- **Mục đích dự án:** Thể hiện kỹ năng xây dựng web từ giao diện đến backend, database và bảo mật cơ bản.
+
+---
+
+## Công nghệ sử dụng
 
 | Thành phần | Công nghệ |
 |------------|-----------|
-| **Backend** | PHP 7.4+ |
-| **Database** | MySQL / MariaDB (qua phpMyAdmin) |
+| **Backend** | PHP (thuần, hướng thủ tục + hàm) |
+| **Database** | MySQL (MariaDB), UTF-8 |
 | **Frontend** | HTML5, CSS3, JavaScript |
 | **Framework CSS** | Bootstrap 5 |
-| **Icons** | Font Awesome 7, Bootstrap Icons |
-| **Fonts** | Poppins, Source Sans 3 |
-| **Server** | XAMPP (Apache + PHP + MySQL) |
+| **Font & Icon** | Google Fonts (Poppins, Source Sans 3), Font Awesome, Bootstrap Icons |
+| **Môi trường chạy** | XAMPP (Apache + PHP + MySQL) |
 
 ---
 
-## 📁 Cấu trúc thư mục
+## Tính năng chính
+
+### 1. Trang công khai (Public)
+
+- **Trang chủ (Aquarium):** Hero, About, Upcoming Events, Featured Experiences, Attractions.
+- **Đa site:** Chuyển giữa Aquarium / Boardwalk / Sweet Shop; header/footer và CSS load theo từng site.
+- **Nội dung:** Our Mission, Event Detail, Experience Detail, đăng ký sự kiện (form + lưu DB).
+- **Sweet Shop:** Trang sản phẩm theo danh mục, chi tiết sản phẩm, thêm vào giỏ.
+- **Boardwalk:** Các trang con (Beach, Arcades, Fun Games, Mini Golf, Shopping, Adventure Lookout…).
+
+### 2. Người dùng (Auth & Profile)
+
+- Đăng ký, đăng nhập, đăng xuất (session, bảo mật mật khẩu bằng `password_hash`).
+- Phân quyền: **customer** / **admin** (admin vào được `/admin/`).
+- Profile: cập nhật họ tên, email, số điện thoại, địa chỉ.
+
+### 3. Giỏ hàng & Đơn hàng
+
+- Giỏ hàng dựa trên **session** (không cần đăng nhập để thêm vào giỏ).
+- Trang giỏ hàng, cập nhật số lượng, xóa sản phẩm.
+- Checkout: nhập thông tin giao hàng, lưu đơn vào DB (orders, order_items).
+- Trang “My Orders”: xem lịch sử đơn (khi đã đăng nhập).
+
+### 4. API / AJAX
+
+- **Newsletter:** Form đăng ký nhận tin (footer); API nhận email, lưu vào bảng `subscriptions` (AJAX).
+
+### 5. Khu vực Admin
+
+- **Dashboard:** Thống kê nhanh (đơn hàng, user, v.v. tùy hiện thực).
+- **Quản lý sản phẩm:** Danh sách, thêm/sửa/xóa (categories, products).
+- **Quản lý đơn hàng:** Danh sách đơn, xem chi tiết đơn, cập nhật trạng thái.
+- **Quản lý người dùng:** Danh sách user, phân quyền/trạng thái (nếu có).
+- **Đăng ký sự kiện:** Xem danh sách đăng ký event.
+- **Newsletter:** Xem danh sách email đăng ký tin.
+
+---
+
+## Cấu trúc thư mục
 
 ```
 eProject_2_2/
-├── admin/                 # Khu vực quản trị
-│   ├── includes/          # Sidebar, layout admin
-│   ├── index.php          # Dashboard
-│   ├── products.php       # Quản lý sản phẩm
-│   ├── categories.php     # Quản lý danh mục
-│   ├── orders.php         # Danh sách đơn hàng
-│   ├── order_detail.php   # Chi tiết đơn hàng
-│   ├── users.php          # Quản lý người dùng
-│   ├── events.php         # Danh sách sự kiện
-│   ├── event_registrations.php  # Đăng ký sự kiện
-│   └── subscriptions.php  # Newsletter
-├── auth/                  # Xác thực
-│   ├── login.php
-│   ├── register.php
-│   ├── logout.php
-│   └── profile.php
-├── product/               # Giỏ hàng, checkout
-│   ├── cart.php
-│   ├── checkout.php
-│   ├── add_to_cart.php
-│   ├── my_orders.php
-│   ├── order_detail.php
-│   └── order_success.php
-├── componets/             # Các trang nội dung
-│   ├── ourmission.php     # Về chúng tôi
-│   ├── boardwalk.php      # Boardwalk
-│   ├── sweet-shop.php     # Sweet Shop
-│   ├── sweet-shop-order.php
-│   ├── beach.php          # Bãi biển
-│   ├── arcades.php
-│   ├── adventure-lookout.php
-│   ├── mini-golf.php
-│   ├── fun-games.php
-│   ├── shopping.php
-│   ├── product-detail.php
-│   ├── experience-detail.php
-│   ├── event-detail.php
-│   ├── event-register.php
-│   └── add_experience_to_cart.php
+├── index.php                 # Trang chủ Aquarium
 ├── includes/
-│   ├── header.php         # Header chung
-│   ├── footer.php         # Footer chung
-│   ├── auth.php           # Hàm auth (login, register, requireAdmin…)
-│   ├── functions.php      # Hàm tiện ích (formatCurrency, getProducts…)
-│   ├── experience-data.php # Dữ liệu trải nghiệm/sự kiện
-│   └── variables.css
-├── css/                   # Stylesheet
-├── js/                    # Script
-│   ├── common/newsletter.js
-│   ├── pages/homepage.js
-│   └── pages/product-detail.js
-├── img/                   # Hình ảnh
+│   ├── header.php            # Header chung (menu, logo, CSS theo site)
+│   ├── footer.php            # Footer chung (newsletter, link)
+│   ├── auth.php              # Session, đăng nhập/đăng ký, isLoggedIn(), isAdmin()
+│   └── functions.php         # Hàm dùng chung: sanitize, formatCurrency, cart, DB...
+├── componets/                # Trang nội dung (Boardwalk, Sweet Shop, event, experience...)
+├── product/                  # Giỏ hàng, checkout, my_orders, order_detail
+├── auth/                     # login, register, logout, profile
+├── admin/                    # Trang quản trị (dashboard, products, orders, users...)
+├── api/                      # subscribe.php (newsletter)
 ├── database/
-│   ├── config.php         # Cấu hình kết nối DB
-│   └── full_database.sql  # Schema đầy đủ
-├── api/
-│   └── subscribe.php      # Xử lý đăng ký newsletter
-└── index.php              # Trang chủ Aquarium
+│   ├── config.php            # Kết nối MySQL (getDBConnection)
+│   └── full_database.sql     # Schema + dữ liệu mẫu
+├── css/                      # Giao diện (variables, reset, header, từng trang...)
+├── js/                       # Script (homepage, newsletter, product-detail...)
+└── img/                      # Hình ảnh
 ```
 
 ---
 
-## ⚙️ Cơ chế hoạt động
+## Cơ sở dữ liệu
 
-### 1. Xác thực (Authentication)
-
-- **Session-based**: Dùng `$_SESSION` để lưu `user_id`, `username`, `email`, `role`.
-- **Mật khẩu**: Mã hóa bằng `password_hash()` (bcrypt).
-- **Phân quyền**: `role` = `admin` hoặc `customer`.
-- **Bảo vệ trang**: `requireLogin()`, `requireAdmin()` trong `includes/auth.php`.
-
-### 2. Giỏ hàng (Cart)
-
-- **Sản phẩm**: Lưu trong `$_SESSION['cart']` dạng `[product_id => quantity]`.
-- **Trải nghiệm**: Lưu trong `$_SESSION['experience_cart']` dạng mảng `[slug, quantity, certificate_name]`.
-- **Thêm sản phẩm**: `product/add_to_cart.php` (POST).
-- **Thêm trải nghiệm**: `componets/add_experience_to_cart.php` (POST).
-
-### 3. Đơn hàng (Orders)
-
-- User đặt hàng tại `product/checkout.php`.
-- Thông tin đơn lưu vào bảng `orders`, chi tiết sản phẩm/trải nghiệm vào `order_items`.
-- Trải nghiệm dùng `product_id = 0`, tên lưu trong `product_name`.
-
-### 4. Sự kiện (Events) & Trải nghiệm (Experiences)
-
-- Dữ liệu tĩnh trong `includes/experience-data.php` (mảng `$experiences`).
-- Có 2 loại:
-  - **Experiences**: Penguin Encounter, Yoga, Otter Encounter, Shark Encounter…
-  - **Events**: Junior Keepers, Yoga Event (có form đăng ký với certificate/guardian).
-- Đăng ký event lưu vào `event_registrations`.
-
-### 5. Newsletter
-
-- Form ở footer gửi qua AJAX tới `api/subscribe.php`.
-- Email lưu vào bảng `subscriptions`.
+- **Database:** `project_data` (UTF-8).
+- **Bảng chính:** `users`, `categories`, `products`, `orders`, `order_items`, `subscriptions`, `event_registrations`.
+- **Mẫu:** Có sẵn admin (username: `admin`, password: `password` thường dùng trong môi trường dev), categories, products mẫu.
+- Import: Chạy file `database/full_database.sql` trong phpMyAdmin hoặc MySQL.
 
 ---
 
-## 🗄 Database
+## Cách chạy dự án
 
-- **Database**: `project_data`
-- **Bảng chính**: `users`, `categories`, `products`, `orders`, `order_items`, `subscriptions`, `event_registrations`
-
-**Import database**
-
-1. Mở phpMyAdmin.
-2. Tạo database `project_data` (hoặc dùng sẵn).
-3. Import file `database/full_database.sql`.
-
-**Cấu hình kết nối**
-
-Chỉnh sửa `database/config.php`:
-
-```php
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');     
-define('DB_NAME', 'project_data');
-```
+1. **Cài đặt môi trường:** XAMPP (Apache + PHP 7.4+ + MySQL/MariaDB).
+2. **Database:** Tạo database `project_data`, import `database/full_database.sql`.
+3. **Cấu hình:** Sửa `database/config.php` nếu cần (host, user, password, DB name).
+4. **Đặt mã nguồn:** Đặt thư mục dự án vào `htdocs` (ví dụ: `C:\xampp\htdocs\eProject_2_2`).
+5. **Truy cập:** Mở trình duyệt: `http://localhost/eProject_2_2/` hoặc `http://localhost/eProject_2_2/index.php`.
 
 ---
 
-## 🚀 Cài đặt & Chạy
+## Điểm nổi bật cho đánh giá
 
-**Yêu cầu**
-
-- XAMPP (Apache + PHP 7.4+ + MySQL)
-- Trình duyệt web
-
-**Các bước**
-
-1. Copy project vào `C:\xampp\htdocs\eProject_2_2`
-2. Khởi động Apache và MySQL trong XAMPP
-3. Import `database/full_database.sql` qua phpMyAdmin
-4. Kiểm tra `database/config.php`
-5. Truy cập: `http://localhost/eProject_2_2/`
+- **Tổ chức code:** Tách header/footer, auth, functions; đường dẫn CSS/JS theo từng trang/site.
+- **Bảo mật cơ bản:** Mật khẩu hash, kiểm tra đăng nhập/role trước khi vào admin, sanitize input.
+- **Trải nghiệm người dùng:** Giao diện responsive (Bootstrap), nhiều section rõ ràng, form đăng ký sự kiện và newsletter.
+- **Chức năng thương mại:** Giỏ hàng session, checkout, lưu đơn hàng, quản lý đơn ở admin.
+- **Mở rộng:** Dễ thêm trang mới, thêm bảng hoặc cột trong DB, thêm quyền hoặc tính năng admin.
 
 ---
 
-## 🔐 Chức năng Admin
+## Tài liệu kèm theo
 
-- **Dashboard**: Tổng quan đơn hàng
-- **Products**: CRUD sản phẩm
-- **Categories**: Quản lý danh mục
-- **Orders**: Xem đơn, cập nhật trạng thái
-- **Users**: Quản lý user (active/inactive/banned)
-- **Events**: Danh sách sự kiện và số đăng ký
-- **Event Registrations**: Chi tiết người đăng ký theo event
-- **Subscriptions**: Danh sách email newsletter
-
-**Truy cập admin**: `http://localhost/eProject_2_2/admin/` (cần đăng nhập với role admin).
+- **HUONG_DAN_CHI_TIET.md:** Hướng dẫn chi tiết cho người chưa quen code (cấu trúc thư mục, luồng trang, một số file quan trọng).
 
 ---
 
-## 🌐 Các trang chính
-
-| Trang | URL | Mô tả |
-|-------|-----|-------|
-| Trang chủ | `index.php` | Aquarium – Hero, About, Upcoming Events, Featured Experiences |
-| Boardwalk | `componets/boardwalk.php` | Nội dung Boardwalk |
-| Sweet Shop | `componets/sweet-shop.php` | Cửa hàng, sản phẩm |
-| Trải nghiệm | `componets/experience-detail.php?experience=slug` | Chi tiết trải nghiệm |
-| Sự kiện | `componets/event-detail.php?event=slug` | Chi tiết & đăng ký sự kiện |
-| Giỏ hàng | `product/cart.php` | Xem và sửa giỏ hàng |
-| Thanh toán | `product/checkout.php` | Đặt hàng (cần đăng nhập) |
-| Đơn hàng | `product/my_orders.php` | Lịch sử đơn hàng |
-
----
-
-## 📝 Ghi chú
-
-- **Design system**: CSS variables trong `css/variables.css`.
-- **Responsive**: Tối ưu cho desktop, tablet, mobile.
-- **Bảo mật**: Đã có xử lý XSS, open redirect, SQL injection cho các vùng nhạy cảm.
-- **Dữ liệu trải nghiệm**: Hiện lưu trong file PHP, có thể chuyển sang database sau.
-
----
-
-## 📄 License
-
-Dự án học tập / thực hành.
+*Dự án phát triển với mục đích học tập và làm đồ án môn học / portfolio. Nội dung và hình ảnh mang tính minh họa.*

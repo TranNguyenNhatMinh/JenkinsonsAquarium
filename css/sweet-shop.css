@@ -189,7 +189,7 @@
 /* Intro */
 .sweetshop-intro {
     background: linear-gradient(180deg, #fff 0%, #fef8fa 35%, #fef5f8 100%);
-    padding: 4rem 0;
+    padding: 4.5rem 0 4rem;
     position: relative;
 }
 
@@ -232,7 +232,7 @@
 
 /* Products */
 .sweetshop-products {
-    padding: 4rem 0 5rem;
+    padding: 4.5rem 0 5.5rem;
     background: #ffffff;
 }
 

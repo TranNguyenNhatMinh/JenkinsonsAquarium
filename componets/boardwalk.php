@@ -69,12 +69,6 @@ include '../includes/header.php';
                 </div>
                 <h3 class="boardwalk-discover-title">Mini Golf</h3>
             </a>
-            <a href="shopping.php" class="boardwalk-discover-card">
-                <div class="boardwalk-discover-img-wrap">
-                    <img src="../img/body2/b11.jpg" alt="Shopping">
-                </div>
-                <h3 class="boardwalk-discover-title">Shopping</h3>
-            </a>
         </div>
     </div>
 </section>

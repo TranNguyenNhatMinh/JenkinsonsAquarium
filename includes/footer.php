@@ -10,17 +10,27 @@
                     <div class="boardwalk-logo mb-3 text-center text-md-start">
                         <div class="boardwalk-logo-text mb-2">
                             <?php
-                            $imgPath = (isset($currentSite) && ($currentSite === 'boardwalk' || $currentSite === 'sweet-shop')) ? '../' : '';
-                            if (isset($currentSite) && $currentSite === 'sweet-shop'):
+                            // Dùng basePath từ header để luôn trỏ đúng thư mục (root vs componets/)
+                            $imgPath = isset($basePath) ? $basePath : '';
+                            if (isset($currentSite) && $currentSite === 'sweet-shop') {
+                                // Sweet Shop footer logo
+                                $logoSrc = $imgPath . 'img/footer/header3.png';
+                                $logoAlt = "Jenkinson's Sweet Shop";
+                            } elseif (isset($currentSite) && $currentSite === 'aquarium') {
+                                // Aquarium footer logo
+                                $logoSrc = $imgPath . 'img/footer/header1.png';
+                                $logoAlt = "Jenkinson's Aquarium";
+                            } else {
+                                // Boardwalk / default footer logo
+                                $logoSrc = $imgPath . 'img/footer/header2.png';
+                                $logoAlt = "Jenkinson's Boardwalk";
+                            }
                             ?>
-                                <img src="<?= $imgPath ?>img/sweetshop.png" alt="Jenkinson's Sweet Shop" class="footer-logo-img">
-                            <?php else: ?>
-                                <img src="<?= $imgPath ?>img/imgfooter.png" alt="Jenkinson's Boardwalk Logo" class="footer-logo-img">
-                            <?php endif; ?>
+                            <img src="<?= $logoSrc ?>" alt="<?= htmlspecialchars($logoAlt) ?>" class="footer-logo-img">
                         </div>
                         <?php if (!isset($currentSite) || $currentSite !== 'sweet-shop'): ?>
-                        <div class="footer-badge mb-1">15 YEARS</div>
-                        <div class="footer-badge">BEST VALUE</div>
+                            <div class="footer-badge mb-1">15 YEARS</div>
+                            <div class="footer-badge">BEST VALUE</div>
                         <?php endif; ?>
                     </div>
                 </div>

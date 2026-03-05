@@ -66,8 +66,17 @@ if ($isAjax) {
 $_SESSION['subscribe_message'] = $message;
 $_SESSION['subscribe_message_type'] = $message_type;
 
-// Get referrer or default to index
-$redirect = $_SERVER['HTTP_REFERER'] ?? '../index.php';
+// Get safe redirect URL or default to index (avoid open redirect)
+$redirect = '../index.php';
+if (!empty($_SERVER['HTTP_REFERER'])) {
+    $ref = $_SERVER['HTTP_REFERER'];
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    // Only allow redirect back to the same host
+    if ($host && strpos($ref, $host) !== false) {
+        $redirect = $ref;
+    }
+}
+
 header('Location: ' . $redirect);
 exit();
 ?>
